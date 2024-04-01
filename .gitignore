@@ -38,3 +38,7 @@
 # generated directories
 bin/
 obj/
+
+#other
+*.pdf
+*.png

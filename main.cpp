@@ -10,12 +10,14 @@
 using namespace std;
 
 const string inputFileName = "15_puzzles.txt";
+const string outputFileName = "output.txt";
 
 /// PUZZLE is defined in IDA_Star.h ==> typedef vector<vector<int>> PUZZLE;
 /// PUZZLE_SIZE is defined in IDA_Star.h ==> const int PUZZLE_SIZE = 4;
 
 void printPuzzles(shared_ptr<vector<PUZZLE>> puzzles);
 shared_ptr<vector<PUZZLE>> getPuzzles();
+void printPuzzleSolutions(vector<string> solutions);
 
 int main()
 {
@@ -25,7 +27,7 @@ int main()
     IDA_Star idaStar = IDA_Star(puzzles);
     idaStar.solvePuzzles();
 
-    printPuzzles(puzzles);
+    printPuzzleSolutions(idaStar.getPuzzleSolutions());
     return 0;
 }
 
@@ -64,6 +66,19 @@ void printPuzzles(shared_ptr<vector<PUZZLE>> puzzles)
             cout << "\n";
         }
         cout << "\n";
+    }
+}
+
+void printPuzzleSolutions(vector<string> solutions)
+{
+    ofstream outputFile(outputFileName, std::ios::out);
+
+    if(outputFile.is_open()){
+        for(string line : solutions){
+            cout << line << endl;
+            outputFile << line << "\n";
+        }
+        outputFile.close();
     }
 }
 

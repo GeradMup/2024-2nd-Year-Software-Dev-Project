@@ -4,6 +4,9 @@
 #include <memory>
 #include <vector>
 #include <iostream>
+#include <cmath>
+#include <tuple>
+#include <algorithm>
 
 using namespace std;
 
@@ -16,19 +19,37 @@ struct Position
     int row;
     int column;
 
+    Position(){}
+    Position(int _row, int _col){
+        this->row = _row;
+        this->column = _col;
+    }
+
     Position& operator=(const Position& pos){
         this->row = pos.row;
         this->column = pos.column;
         return *this;
     }
+
+    bool operator==(const Position& otherPosition){
+        if((this->row == otherPosition.row) && (this->column == otherPosition.column)) return true;
+        else return false;
+    }
+
+    bool operator != (const Position& otherPosition){
+        if(this->row != otherPosition.row) { return true; }
+        else if(this->column != otherPosition.column) { return true; }
+        else return false;
+    }
 };
 
-enum class PossibleMove
+enum class Move
 {
     UP,
     DOWN,
     LEFT,
-    RIGHT
+    RIGHT,
+    NONE
 };
 
 class IDA_Star
@@ -40,6 +61,7 @@ class IDA_Star
         ~IDA_Star();
 
         void solvePuzzles();
+        vector<string> getPuzzleSolutions();
 
     protected:
 
@@ -50,24 +72,30 @@ class IDA_Star
         //We will build a linear puzzle in order to do a parity test on the puzzles to check if they are solvable?
         vector<int> linearPuzzle;
         int numberOfPuzzles;
-        int heuristic;
-        int fscore;
-        int gscore;
-        //Position spacePos;
+        //Stores the value against which the heuristics of each puzzle state will be compared!
+        int boundaryStateScore;
+        //Stores the minimum cost of solving the puzzle found at any given state;
+        int minimumCost;
+        vector<string> allPuzzlesOutput;
+        vector<string> puzzleOutput;
 
         ///PRIVATE FUNCTIONS
         //Locates the position of the space in a given puzzle as indicated by the space.
         Position locateSpace(int puzzleIndex);
         bool isPuzzleSolvable(int puzzleIndex, Position spacePosition);
-        vector<PossibleMove> legalMoves(Position spacePos);
-        bool solvePuzzle(shared_ptr<PUZZLE> puzzle, Position spaceLocation);
-        void play(shared_ptr<PUZZLE> puzzle, PossibleMove _move, Position spacePos);
+        vector<Move> legalMoves(Position spacePos, Move previousMove);
+        bool solvePuzzle(shared_ptr<PUZZLE> puzzle, Position spaceLocation, int numberOfMoves, Move previousMove);
+
+        //Function returns a new puzzle state after moving
+        tuple<shared_ptr<PUZZLE>, Position> play(shared_ptr<PUZZLE> puzzle, Move _move, Position spacePos);
 
         ///Private Helper functions
         bool isEven(int number);
-        string move(PossibleMove _move);
+        string stringMove(Move _move);
+        string formatMove(Move _move, Position spacePosition);
         void printPuzzle(shared_ptr<PUZZLE> puzzles);
-
+        int calculateHeuristic(shared_ptr<PUZZLE> puzzle);
+        Position destination(int number);
 
 
 };
